@@ -1,0 +1,51 @@
+﻿@model CommitsHistoryViewModel
+
+@if (Model.CommitsHistory?.Count() != 0)
+{
+    <input asp-for="@Model.RepoId" hidden />
+    <table class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    <h4>Commit Title</h4>
+                </th>
+                <th>
+                    <h4>Created On</h4>
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var commit in Model.CommitsHistory)
+            {
+                    <tr>
+                        <th>
+                        @commit.Title
+                        </th>
+                        <th>
+                        @commit.CreatedDateTime
+                        </th>
+                         <th>
+                        <a asp-controller="Commit" asp-action="Update" asp-route-id="@commit.Id" asp-route-repoId="@Model.RepoId" class="btn btn-warning" style="width:150px">
+                            <i class="bi bi-pencil-fill"></i>
+                            Edit
+                        </a>
+                        </th>
+                        <th>
+                        <a asp-controller="Commit" asp-action="Delete" asp-route-id="@commit.Id" asp-route-repoId="@Model.RepoId" class="btn btn-danger" style="width:150px">
+                            <i class="bi bi-trash"></i>Delete
+                        </a>
+                        </th>
+                    </tr>
+            }
+        </tbody>
+    </table>
+    <a asp-controller="Repository" asp-action="Details" asp-route-id="@Model.RepoId" class="btn btn-secondary" style="width:150px">Back</a>
+}
+else
+{
+    <h4>No commits added yet!</h4>
+}

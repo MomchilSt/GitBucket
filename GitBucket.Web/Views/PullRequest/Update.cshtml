@@ -1,0 +1,38 @@
+﻿@model PullRequestInputViewModel
+
+<form method="post" asp-action="Update">
+    <input asp-for="RepoId" hidden />
+    <input asp-for="PrId" hidden />
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary text-light">Update Pull Request</h2>
+            <hr />
+        </div>
+        <div class="mb-3" style="width:50%">
+            <label asp-for="Name">Name</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <p>Insert "@Model.SourceName" into</p>
+        <div class="mt-3">
+            <label asp-for="TargetedRepo">Target Repo</label>
+            <select class="form-select input-lg" asp-for="TargetedRepo" style="width:50%">
+                <option value="">
+                    Choose targeted repository...
+                </option>
+                @foreach (var repo in Model.Repositories)
+                {
+                    @if (repo.Name != Model.SourceName)
+                    {
+                        <option value="@repo.Id">@repo.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <br /><br />
+        <div class="mb-3">
+            <button type="submit" class="btn btn-success" style="width:150px">Update</button>
+            <a asp-controller="Repository" asp-action="Details" asp-route-id="@Model.RepoId" class="btn btn-secondary" style="width:150px">Back</a>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,45 @@
+﻿@model IssueInputViewModel
+
+@{
+    ViewData["Title"] = "Issue to Repository";
+}
+
+<form method="post" asp-action="Create">
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary text-light">Issue to @Model.RepositoryId</h2>
+            <hr />
+        </div>
+        <input asp-for="RepositoryId" hidden />
+        <div class="mb-3" style="width:50%">
+            <label asp-for="Title">Issue Name</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label mt-4">Repository Content</label>
+            <textarea class="form-control" asp-for="Content" id="exampleTextarea" rows="6" spellcheck="false"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-warning" style="width:150px">Create Issue</button>
+            <a asp-controller="Issue" asp-action="Index" asp-route-id="@Model.RepositoryId" class="btn btn-secondary" style="width:150px">Back</a>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+                { value: 'First.Name', title: 'First Name' },
+                { value: 'Email', title: 'Email' },
+            ]
+        });
+    </script>
+}

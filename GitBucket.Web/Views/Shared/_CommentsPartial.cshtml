@@ -1,0 +1,20 @@
+﻿@model CommentsViewModel
+
+<div class="form-group mb-5" style="width:70%">
+    <label for="exampleTextarea" class="form-label mt-4">Enter your comment:</label>
+    <textarea class="form-control" id="textArea" rows="3" spellcheck="false"></textarea>
+    <button type="button" data-prid="@Model.PrId" class="comment btn btn-secondary mt-2">Comment</button>
+</div>
+
+<h4 style="text-align: center;">Comments:</h4>
+
+@foreach (var comment in Model.Comments)
+{
+    <div class="alert alert-dismissible alert-light">
+        <p>Created On: @comment.CreatedDateTime</p>
+        @comment.Title
+    </div>
+     <a class="delete btn btn-danger mb-5" data-id="@comment.Id" data-prId="@comment.PullRequestId" style="width:150px">
+         <i class="bi bi-trash"></i>Delete
+     </a>
+}

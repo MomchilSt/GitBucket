@@ -1,0 +1,56 @@
+﻿@model RepositoryEditInputModel
+
+@{
+    ViewData["Title"] = "Edit Repository";
+}
+
+<form method="post" asp-action="Edit">
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary text-light">Edit Repository</h2>
+            <hr />
+        </div>
+        <div class="mt-3">
+            <label asp-for="Access">Access</label>
+            <select class="form-select input-lg" asp-for="Access" style="width:50%">
+                <option value="Public">
+                    Select public or private repository (Public by default)
+                </option>
+                <option value="Public">Public</option>
+                <option value="Private">Private</option>
+            </select>
+        </div>
+        <br /><br />
+        <div class="mb-3" style="width:50%">
+            <label asp-for="Name">Name</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <br /><br />
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label mt-4">Repository Content</label>
+            <textarea class="form-control" asp-for="Content" id="exampleTextarea" rows="6" spellcheck="false"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+        <button type="submit" class="btn btn-warning" style="width:150px">Update</button>
+            <a asp-controller="Repository" asp-action="Index" class="btn btn-secondary" style="width:150px">Back</a>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+         <script>
+        tinymce.init({
+          selector: 'textarea',
+          plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect',
+          toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+          tinycomments_mode: 'embedded',
+          tinycomments_author: 'Author name',
+          mergetags_list: [
+            { value: 'First.Name', title: 'First Name' },
+            { value: 'Email', title: 'Email' },
+          ]
+        });
+      </script>
+}

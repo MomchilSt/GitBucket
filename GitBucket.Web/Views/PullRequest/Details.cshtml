@@ -1,0 +1,86 @@
+﻿@model PullRequestViewModel
+
+<div class="row">
+    <h1 style="text-align: center;">@Model.Name</h1>
+    <hr />
+<div class="column">
+    <h2>Target Repository Name -> @Model.TargetRepositoryName</h2>
+    <div class="alert alert-dismissible alert-secondary">
+        @Html.Raw(Model.TargetRepositoryContent)
+    </div>
+</div>
+<div class="column">
+     <h2>Source Repository Name -> @Model.SourceName</h2>
+    <div class="alert alert-dismissible alert-secondary">
+        @Html.Raw(Model.SourceContent)
+    </div>
+</div>
+<hr />
+
+@Html.Partial("~/Views/Shared/_CommentsPartial.cshtml", Model.Comments)
+
+
+@section Scripts{
+    <script type="text/javascript">
+            $('.comment').click(function () {
+                const button = $(this);
+                console.log($('#textArea').val())
+                console.log(button.data('prid'))
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("Create", "Comment")",
+                    data: {
+                        content: $('#textArea').val(),
+                        prId: button.data('prid')
+                    },
+                    success: function (result) {
+                        location.reload();
+                    },
+                    error: function (req, status, error) {
+                        console.log(status);
+                    }
+                });
+            })
+
+        $('.delete').click(function () {
+             const button = $(this);
+             $.ajax({
+               type: "GET",
+               url: "@Url.Action("Delete", "Comment")",
+               data: {
+                        id: button.data("id"),
+                        prId: button.data("prid")
+               },
+               success: function (result) {
+                        location.reload();
+               },
+               error: function (req, status, error) {
+                        console.log(status);
+               }
+            });
+        })
+    
+    
+    
+                
+    
+    
+                    //$.ajax({
+                    //type: "POST",
+                    //url: "@Url.Action("Create", "Comment")",
+                    //data: {
+                    //    content: "asd",
+                    //    prId: "Id"
+                    //},
+                    //success: function(result){
+                    //        $(('<div class="alert alert-dismissible alert-light" style="width:50%">' + result.title + '</div>')).appendTo("#targetDIV");
+                    //    console.log(result);
+                    //},
+                    //error: function(req, status, error){
+                    //    console.log(status);
+                    //}
+                    //});
+                //})
+    
+    </script>
+}

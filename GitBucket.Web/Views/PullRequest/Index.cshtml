@@ -1,0 +1,60 @@
+﻿@model PullRequestsViewModel
+
+<table class="table table-bordered table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                <h4>Name</h4>
+            </th>
+            <th>
+                <h4>Created On</h4>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pr in Model.PullRequests)
+        {
+            <tr>
+                <th>
+                     <a asp-controller="PullRequest" asp-action="Details" asp-route-id="@pr.Id">
+                        @pr.Name - View incoming changes
+                     </a>
+                </th>
+                <th>
+                    @pr.CreatedDateTime
+                </th>
+                <th>
+                    <div class="w-75 btn-group" role="group">
+                        <a asp-controller="PullRequest" 
+                        asp-action="Approve" 
+                        asp-route-target="@pr.TargetRepository" 
+                        asp-route-source="@pr.Source"
+                        asp-route-prId="@pr.Id" class="btn btn-success btn-sm mx-2">
+                            <i class="bi bi-check-lg"></i> Approve
+                        </a>
+                    </div>
+                </th>
+                <th>
+                    <div class="w-75 btn-group" role="group">
+                        <a asp-controller="PullRequest" asp-action="Update" asp-route-id="@pr.Id" asp-route-repoId="@Model.RepoId" class="btn btn-warning btn-sm mx-2">
+                            <i class="bi bi-pencil-fill"></i> Update
+                        </a>
+                    </div>
+                </th>
+                <th>
+                    <div class="w-75 btn-group" role="group">
+                        <a asp-controller="PullRequest" asp-action="Delete" asp-route-prId="@pr.Id" asp-route-id="@Model.RepoId" class="btn btn-danger btn-sm mx-2">
+                            <i class="bi bi-trash"></i> Decline
+                        </a>
+                    </div>
+                </th>
+            </tr>
+        }
+    </tbody>
+</table>
