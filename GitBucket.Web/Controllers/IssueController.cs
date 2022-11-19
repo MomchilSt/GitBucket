@@ -2,10 +2,12 @@
 using GitBucket.Models;
 using GitBucket.Models.InputModels;
 using GitBucket.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GitBucket.Web.Controllers
 {
+    [Authorize]
     public class IssueController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -14,18 +16,19 @@ namespace GitBucket.Web.Controllers
             this._unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index(int? id)
+        public IActionResult Index(string? id)
         {
             var issues = _unitOfWork.IssueRepository.GetAll().Where(r => r.RepositoryId == id);
+            var repos = _unitOfWork.RepoRepository.GetAll();
 
-            var model = new IssueViewModel{ RepoId = id, Issues= issues };
+            var model = new IssueViewModel{ RepoId = id, Issues= issues, Repositories = repos, LoggedUserId = User.Claims.First().Value };
 
             return View(model);
         }
 
-        public IActionResult Create(int id)
+        public IActionResult Create(string id)
         {
-            var model = new IssueInputViewModel { RepositoryId = id };
+            var model = new IssueInputViewModel { RepositoryId = id, RepoName = _unitOfWork.RepoRepository.GetFirstOrDefault(r => r.Id == id).Name };
             return View(model);
         }
 
@@ -33,21 +36,17 @@ namespace GitBucket.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(IssueInputViewModel model)
         {
-            if (model.Title == model.Content)
-            {
-                ModelState.AddModelError("title", "Title and content cannot be equal!");
-            }
-
             if (ModelState.IsValid)
             {
                 var repoFromDb = this._unitOfWork.RepoRepository.GetFirstOrDefault(r => r.Id == model.RepositoryId);
 
                 var issue = new Issue()
                 {
+                    Id = Guid.NewGuid().ToString(),
                     Title = model.Title,
                     Content = model.Content,
                     RepositoryId = model.RepositoryId,
-                    UserId = 1
+                    UserId = User.Claims.First().Value
                 };
 
                 _unitOfWork.IssueRepository.Add(issue);
@@ -59,9 +58,9 @@ namespace GitBucket.Web.Controllers
             return this.RedirectToAction("Create", new { id = model.RepositoryId });
         }
 
-        public IActionResult Update(int? id)
+        public IActionResult Update(string? id)
         {
-            if (id == null || id == 0)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
@@ -90,11 +89,6 @@ namespace GitBucket.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Update(IssueUpdateViewModel model)
         {
-            if (model.Title == model.Content)
-            {
-                ModelState.AddModelError("title", "Title and content cannot be equal!");
-            }
-
             if (ModelState.IsValid)
             {
                 var issueFromDb = this._unitOfWork.IssueRepository.GetFirstOrDefault(r => r.Id == model.Id);
@@ -110,7 +104,7 @@ namespace GitBucket.Web.Controllers
             return this.View(model);
         }
 
-        public IActionResult Delete(int? id, int? repoId)
+        public IActionResult Delete(string? id, string? repoId)
         {
             var issueeFromDb = this._unitOfWork.IssueRepository.GetFirstOrDefault(r => r.Id == id);
             if (issueeFromDb == null)

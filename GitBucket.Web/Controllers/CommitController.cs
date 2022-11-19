@@ -2,10 +2,12 @@
 using GitBucket.Models;
 using GitBucket.Models.InputModels;
 using GitBucket.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GitBucket.Web.Controllers
 {
+    [Authorize]
     public class CommitController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -14,9 +16,9 @@ namespace GitBucket.Web.Controllers
             this._unitOfWork = unitOfWork;
         }
 
-        public IActionResult Commit(int? id)
+        public IActionResult Commit(string? id)
         {
-            if (id == null || id == 0)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
@@ -31,7 +33,7 @@ namespace GitBucket.Web.Controllers
             {
                 RepoId = repoFromDb.Id,
                 RepoName = repoFromDb.Name,
-                RepoContent = repoFromDb.Content
+                RepoContent = repoFromDb.Content,
             };
 
             return View(model);
@@ -42,11 +44,6 @@ namespace GitBucket.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Commit(CommitInputViewmodel model)
         {
-            if (model.Title == model.RepoContent)
-            {
-                ModelState.AddModelError("title", "Title and content cannot be equal!");
-            }
-
             if (ModelState.IsValid)
             {
                 var repoFromDb = this._unitOfWork.RepoRepository.GetFirstOrDefault(r => r.Id == model.RepoId);
@@ -57,12 +54,13 @@ namespace GitBucket.Web.Controllers
 
                 var commit = new Commit()
                 {
+                    Id = Guid.NewGuid().ToString(),
                     Title = model.Title,
                     Content = model.RepoContent,
                     RepositoryId = model.RepoId,
                     Repository = repoFromDb,
                     ContentBeforeCommit = oldContent,
-                    UserId = 1
+                    UserId = User.Claims.First().Value
                 };
                 _unitOfWork.CommitRepository.Add(commit);
                 repoFromDb.Commits.Add(commit);
@@ -74,22 +72,23 @@ namespace GitBucket.Web.Controllers
             return this.RedirectToAction("Commit", new { id = model.RepoId });
         }
 
-        public IActionResult History(int? id)
+        public IActionResult History(string? id)
         {
-            if (id == null || id == 0)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
             var model = new CommitsHistoryViewModel 
             { 
                 RepoId = id,
-                CommitsHistory = _unitOfWork.CommitRepository.GetAll().Where(x => x.RepositoryId == id) 
+                CommitsHistory = _unitOfWork.CommitRepository.GetAll().Where(x => x.RepositoryId == id),
+                LoggedUserId = User.Claims.First().Value
             };
 
             return View(model);
         }
 
-        public IActionResult Delete(int? id, int? repoId)
+        public IActionResult Delete(string? id, string? repoId)
         {
             var commitFromDb = this._unitOfWork.CommitRepository.GetFirstOrDefault(r => r.Id == id);
             if (commitFromDb == null)
@@ -107,9 +106,9 @@ namespace GitBucket.Web.Controllers
         }
 
 
-        public IActionResult Update(int? id, int repoId)
+        public IActionResult Update(string? id, string repoId)
         {
-            if (id == null || id == 0)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
@@ -135,11 +134,6 @@ namespace GitBucket.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Update(CommitInputViewmodel model)
         {
-            if (model.Title == model.RepoContent)
-            {
-                ModelState.AddModelError("name", "Name and content cannot be equal!");
-            }
-
             if (ModelState.IsValid)
             {
                 var repoFromDb = this._unitOfWork.RepoRepository.GetFirstOrDefault(r => r.Id == model.RepoId);

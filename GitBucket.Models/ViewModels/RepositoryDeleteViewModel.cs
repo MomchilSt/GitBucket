@@ -2,9 +2,9 @@
 
 namespace GitBucket.Models.ViewModels
 {
-    public class RepositoryDeleteViewModel
+    public class RepositoryDeleteViewModel : LoggedUserIdModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Access { get; set; }
         public string Name { get; set; }
         public string Content { get; set; }

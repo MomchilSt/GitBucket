@@ -1,6 +1,6 @@
 ﻿namespace GitBucket.Models.ViewModels
 {
-    public class RepositoriesViewModel
+    public class RepositoriesViewModel : LoggedUserIdModel
     {
         public IEnumerable<Repository> Repositories { get; set; }
 

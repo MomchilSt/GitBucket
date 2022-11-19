@@ -5,7 +5,7 @@ namespace GitBucket.Models
     public class Commit
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string Title { get; set; }
         public string Content { get; set; }
@@ -13,11 +13,11 @@ namespace GitBucket.Models
         public string ContentBeforeCommit { get; set; }
 
         [Required]
-        public int RepositoryId { get; set; }
+        public string RepositoryId { get; set; }
         public Repository Repository { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
     }

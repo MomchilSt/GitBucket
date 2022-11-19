@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Repository Details";
 }
-
 <a asp-controller="Commit" asp-action="Commit" asp-route-id="@Model.Id" class="btn btn-secondary">New Commit</a>
 <a asp-controller="PullRequest" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-secondary">Open Pull Request</a>
 <a asp-controller="Issue" asp-action="Create" asp-route-id="@Model.Id" class="btn btn-secondary">New Issue</a>
@@ -20,3 +19,4 @@
     <a asp-controller="PullRequest" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-outline-primary">Pull Requests</a>
     <a asp-controller="Issue" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-outline-primary">Issues</a>
 </div>
+<a asp-controller="Repository" asp-action="Index" class="btn btn-secondary mt-3" style="width:150px">Back</a>

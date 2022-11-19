@@ -3,10 +3,14 @@ using GitBucket.Data.Repositories.Interfaces;
 using GitBucket.Models;
 using GitBucket.Models.InputModels;
 using GitBucket.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GitBucket.Web.Controllers
 {
+    [Authorize]
     public class RepositoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -19,8 +23,10 @@ namespace GitBucket.Web.Controllers
         {
             var model = new RepositoriesViewModel 
             { 
-                Repositories = _unitOfWork.RepoRepository.GetAll() ,
-                Commits = _unitOfWork.CommitRepository.GetAll()
+                Repositories = _unitOfWork.RepoRepository.GetAll(),
+                Commits = _unitOfWork.CommitRepository.GetAll(),
+                LoggedUserId = User.Claims.First().Value
+
             };
             return View(model);
         }
@@ -34,18 +40,15 @@ namespace GitBucket.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(RepositoryCreateInputModel model)
         {
-            if (model.Name == model.Content)
-            {
-                ModelState.AddModelError("name", "Name and content cannot be equal!");
-            }
-
             if (ModelState.IsValid)
             {
                 var repo = new Repository
                 {
+                    Id = Guid.NewGuid().ToString(),
                     Access = model.Access,
                     Name = model.Name,
-                    Content = model.Content
+                    Content = model.Content,
+                    UserId = User.Claims.First().Value
                 };
 
                 _unitOfWork.RepoRepository.Add(repo);
@@ -56,9 +59,9 @@ namespace GitBucket.Web.Controllers
             return this.View(model);
         }
 
-        public IActionResult Details(int? id)
+        public IActionResult Details(string? id)
         {
-            if (id == null || id == 0)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
@@ -78,15 +81,16 @@ namespace GitBucket.Web.Controllers
                 Commits = repoFromDb.Commits,
                 PullRequests = repoFromDb.PullRequests,
                 Issues = repoFromDb.Issues,
-                CreatedDateTime= repoFromDb.CreatedDateTime
+                CreatedDateTime= repoFromDb.CreatedDateTime,
+                LoggedUserId = User.Claims.First().Value
             };
 
             return View(model);
         }
 
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(string? id)
         {
-            if (id == null || id == 0)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
@@ -112,11 +116,6 @@ namespace GitBucket.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(RepositoryEditInputModel model)
         {
-            if (model.Name == model.Content)
-            {
-                ModelState.AddModelError("name", "Name and content cannot be equal!");
-            }
-
             if (ModelState.IsValid)
             {
                 var repoFromDb = this._unitOfWork.RepoRepository.GetFirstOrDefault(r => r.Id == model.Id);
@@ -133,9 +132,9 @@ namespace GitBucket.Web.Controllers
             return this.View(model);
         }
 
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(string? id)
         {
-            if (id == null || id == 0)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
@@ -159,7 +158,7 @@ namespace GitBucket.Web.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? id)
+        public IActionResult DeletePOST(string? id)
         {
             var repoFromDb = this._unitOfWork.RepoRepository.GetFirstOrDefault(r => r.Id == id);
             if (repoFromDb == null)

@@ -2,10 +2,12 @@
 using GitBucket.Models;
 using GitBucket.Models.InputModels;
 using GitBucket.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GitBucket.Web.Controllers
 {
+    [Authorize]
     public class PullRequestController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -14,20 +16,23 @@ namespace GitBucket.Web.Controllers
             this._unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index(int? id)
+        public IActionResult Index(string? id)
         {
             var pullRequests = _unitOfWork.PullRequestRepository.GetAll().Where(x => x.TargetRepository == id);
+            var repos = _unitOfWork.RepoRepository.GetAll();
 
             var model = new PullRequestsViewModel
             {
                 PullRequests = pullRequests,
-                RepoId = id
+                Repositories = repos,
+                RepoId = id,
+                LoggedUserId = User.Claims.First().Value
             };
 
             return View(model);
         }
 
-        public IActionResult Details(int? id)
+        public IActionResult Details(string? id)
         {
             var pullRequestFromDb = _unitOfWork.PullRequestRepository.GetFirstOrDefault(x => x.Id == id);
 
@@ -51,17 +56,18 @@ namespace GitBucket.Web.Controllers
                 SourceContent = source.Content,
                 TargetRepositoryName = target.Name,
                 TargetRepositoryContent =  target.Content,
-                Comments = commentsModel
+                Comments = commentsModel,
+                LoggedUserId = User.Claims.First().Value
             };
 
             return View(model);
         }
 
-        public IActionResult Create(int? id)
+        public IActionResult Create(string? id)
         {
             var source = _unitOfWork.RepoRepository.GetFirstOrDefault(x => x.Id == id);
 
-            if (source == null || source.Id == 0)
+            if (source == null)
             {
                 return NotFound();
             }
@@ -84,10 +90,11 @@ namespace GitBucket.Web.Controllers
             {
                 var pullRequest = new PullRequest
                 {
+                    Id = Guid.NewGuid().ToString(),
                     Name = model.Name,
                     Source = model.RepoId,
                     TargetRepository = model.TargetedRepo,
-                    UserId = 1
+                    UserId = User.Claims.First().Value
                 };
 
                 _unitOfWork.PullRequestRepository.Add(pullRequest);
@@ -100,7 +107,7 @@ namespace GitBucket.Web.Controllers
             return RedirectToAction("Create", new { id = model.RepoId});
         }
 
-        public IActionResult Delete(int? prId, int id)
+        public IActionResult Delete(string? prId, string id)
         {
             var prFromDb = this._unitOfWork.PullRequestRepository.GetFirstOrDefault(r => r.Id == prId);
             if (prFromDb == null)
@@ -114,7 +121,7 @@ namespace GitBucket.Web.Controllers
             return RedirectToAction("Index", new { id = id });
         }
 
-        public IActionResult Approve(int? target, int? source, int? prId)
+        public IActionResult Approve(string? target, string? source, string? prId)
         {
             var targetRepoFromDb = this._unitOfWork.RepoRepository.GetFirstOrDefault(r => r.Id == target);
             var sourceRepoFromDb = this._unitOfWork.RepoRepository.GetFirstOrDefault(r => r.Id == source);
@@ -133,9 +140,9 @@ namespace GitBucket.Web.Controllers
             return RedirectToAction("Details", "Repository", new { id = target });
         }
 
-        public IActionResult Update(int? id, int repoId)
+        public IActionResult Update(string? id, string repoId)
         {
-            if (id == null || id == 0)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
@@ -170,7 +177,6 @@ namespace GitBucket.Web.Controllers
                 prFromDb.Name = model.Name;
                 prFromDb.Source = model.RepoId;
                 prFromDb.TargetRepository = model.TargetedRepo;
-                prFromDb.UserId = 1;
 
                 _unitOfWork.PullRequestRepository.Update(prFromDb);
 

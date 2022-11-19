@@ -9,10 +9,11 @@ namespace GitBucket.Models.InputModels
         [Required]
         public string Content { get; set; }
 
-        [Required]
-        public int UserId { get; set; }
+        public string? UserId { get; set; }
 
         [Required]
-        public int RepositoryId { get; set; }
+        public string RepositoryId { get; set; }
+
+        public string? RepoName { get; set; }
     }
 }

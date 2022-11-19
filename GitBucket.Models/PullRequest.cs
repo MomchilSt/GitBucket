@@ -10,18 +10,18 @@ namespace GitBucket.Models
         }
 
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         public string Name { get; set; }
 
-        public int? TargetRepository { get; set; }
+        public string? TargetRepository { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }
         [Required]
-        public int? Source { get; set; }
+        public string? Source { get; set; }
 
         public ICollection<Comment> Comments { get; set; }
 

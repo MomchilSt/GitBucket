@@ -4,7 +4,7 @@ namespace GitBucket.Models.InputModels
 {
     public class RepositoryCreateInputModel
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         [Required]
         public string Access { get; set; }

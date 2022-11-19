@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace GitBucket.Models
 {
-    public class User
+    public class User : IdentityUser
     {
         public User()
         {
@@ -13,8 +14,8 @@ namespace GitBucket.Models
             this.Comments = new HashSet<Comment>();
         }
 
-        [Key]
-        public int Id { get; set; }
+        [Required]
+        public string Name { get; set; }
 
         public ICollection<Repository> Repositories { get; set; }
 

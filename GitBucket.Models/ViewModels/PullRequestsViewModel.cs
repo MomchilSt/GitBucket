@@ -1,9 +1,11 @@
 ﻿namespace GitBucket.Models.ViewModels
 {
-    public  class PullRequestsViewModel
+    public class PullRequestsViewModel : LoggedUserIdModel
     {
-        public int? RepoId { get; set; }
+        public string? RepoId { get; set; }
 
         public IEnumerable<PullRequest> PullRequests { get; set;}
+
+        public IEnumerable<Repository> Repositories { get; set; }
     }
 }

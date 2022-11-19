@@ -1,8 +1,8 @@
 ﻿namespace GitBucket.Models.ViewModels
 {
-    public class CommitsHistoryViewModel
+    public class CommitsHistoryViewModel : LoggedUserIdModel
     {
-        public int? RepoId { get; set; }
+        public string? RepoId { get; set; }
         public IEnumerable<Commit> CommitsHistory { get; set; }
     }
 }

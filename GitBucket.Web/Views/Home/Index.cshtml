@@ -1,8 +1,30 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<h4 style="text-align:center">Welcome to GitBucket</h4>
+<hr />
+<br />
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (User.Identity.IsAuthenticated)
+{
+    <h4 style="text-align: center;">Hello @User.Identity.Name</h4>
+    <div style="text-align: center;">
+        <a class="btn-lg btn btn-primary text-light mt-3" asp-area="" asp-controller="Repository" asp-action="Index">Repositories</a>
+    </div>
+@*    <form id="logoutForm" class="form-inline mt-3" style="text-align: center;" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+        <button id="logout" type="submit" class="btn-lg btn btn-primary text-light">Logout</button>
+    </form>*@
+                
+}
+else
+{
+    <div style="text-align: center;">
+        <a class="btn-lg btn btn-primary text-light" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <a class="btn-lg btn btn-primary text-light" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    </div>
+}
+
+<br />
+<hr />
+<canvas id="canvas">
+</canvas>

@@ -1,5 +1,8 @@
 ﻿@model PullRequestsViewModel
 
+<p class="mb-2">Only repository owners can approve pull requests.</p>
+<p class="mb-5">Pull requests to targeted repositories are shown here.</p>
+
 <table class="table table-bordered table-striped" style="width:100%">
     <thead>
         <tr>
@@ -30,7 +33,9 @@
                     @pr.CreatedDateTime
                 </th>
                 <th>
-                    <div class="w-75 btn-group" role="group">
+                    @if (Model.Repositories.Any(p => p.Id == pr.TargetRepository) && Model.LoggedUserId == Model.Repositories.FirstOrDefault(p => p.Id == pr.TargetRepository).UserId)
+                    {
+                       <div class="w-75 btn-group" role="group">
                         <a asp-controller="PullRequest" 
                         asp-action="Approve" 
                         asp-route-target="@pr.TargetRepository" 
@@ -38,23 +43,31 @@
                         asp-route-prId="@pr.Id" class="btn btn-success btn-sm mx-2">
                             <i class="bi bi-check-lg"></i> Approve
                         </a>
-                    </div>
+                       </div>
+                    }
                 </th>
                 <th>
-                    <div class="w-75 btn-group" role="group">
+                    @if (Model.LoggedUserId == pr.UserId)
+                    {
+                       <div class="w-75 btn-group" role="group">
                         <a asp-controller="PullRequest" asp-action="Update" asp-route-id="@pr.Id" asp-route-repoId="@Model.RepoId" class="btn btn-warning btn-sm mx-2">
                             <i class="bi bi-pencil-fill"></i> Update
                         </a>
-                    </div>
+                       </div>
+                    }
                 </th>
                 <th>
-                    <div class="w-75 btn-group" role="group">
-                        <a asp-controller="PullRequest" asp-action="Delete" asp-route-prId="@pr.Id" asp-route-id="@Model.RepoId" class="btn btn-danger btn-sm mx-2">
-                            <i class="bi bi-trash"></i> Decline
-                        </a>
-                    </div>
+                    @if(Model.LoggedUserId == pr.UserId)
+                    {
+                       <div class="w-75 btn-group" role="group">
+                           <a asp-controller="PullRequest" asp-action="Delete" asp-route-prId="@pr.Id" asp-route-id="@Model.RepoId" class="btn btn-danger btn-sm mx-2">
+                               <i class="bi bi-trash"></i> Decline
+                           </a>
+                       </div>
+                    }
                 </th>
             </tr>
         }
     </tbody>
 </table>
+<a asp-controller="Repository" asp-action="Details" asp-route-id="@Model.RepoId" class="btn btn-secondary" style="width:150px">Back</a>

@@ -1,11 +1,12 @@
 ﻿using GitBucket.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 
 namespace GitBucket.Data
 {
-    public class GitBucketDbContext : DbContext
+    public class GitBucketDbContext : IdentityDbContext
     {
         public GitBucketDbContext(DbContextOptions<GitBucketDbContext> options) :base(options) { }
 
@@ -59,6 +60,8 @@ namespace GitBucket.Data
             .HasOne(e => e.User)
             .WithMany(r => r.Repositories)
             .OnDelete(DeleteBehavior.NoAction);
+
+            base.OnModelCreating(modelBuilder); 
         }
     }
 }

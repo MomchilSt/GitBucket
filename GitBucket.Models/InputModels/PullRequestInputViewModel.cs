@@ -7,12 +7,12 @@ namespace GitBucket.Models.InputModels
         [Required]
         public string Name { get; set; }
         public string? SourceName { get; set; }
-        public int? RepoId { get; set; }
+        public string? RepoId { get; set; }
         public IEnumerable<Repository>? Repositories { get; set;}
 
         [Required]
-        public int TargetedRepo { get; set; }
+        public string TargetedRepo { get; set; }
 
-        public int? PrId { get; set; }
+        public string? PrId { get; set; }
     }
 }

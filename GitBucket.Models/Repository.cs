@@ -12,7 +12,7 @@ namespace GitBucket.Models
         }
 
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         [MaxLength(10)]
@@ -27,7 +27,7 @@ namespace GitBucket.Models
         public ICollection<Issue> Issues { get; set; }
         public ICollection<PullRequest> PullRequests { get; set; }
 
-        public int? UserId { get; set; }
+        public string? UserId { get; set; }
         public User? User { get; set; }
 
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;

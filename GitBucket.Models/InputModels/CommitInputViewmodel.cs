@@ -7,9 +7,9 @@ namespace GitBucket.Models.InputModels
         [Required]
         [MinLength(3, ErrorMessage = "Title should be 3 characters!")]
         public string Title { get; set; }
-        public int RepoId { get; set; }
+        public string RepoId { get; set; }
 
-        public int? CommitId { get; set; }
+        public string? CommitId { get; set; }
 
         public string? RepoName { get; set; }
         [Required]
