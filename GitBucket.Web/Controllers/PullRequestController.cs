@@ -1,4 +1,5 @@
-﻿using GitBucket.Data.Repositories.Interfaces;
+﻿using GitBucket.Data.Repositories;
+using GitBucket.Data.Repositories.Interfaces;
 using GitBucket.Models;
 using GitBucket.Models.InputModels;
 using GitBucket.Models.ViewModels;
@@ -35,15 +36,19 @@ namespace GitBucket.Web.Controllers
         public IActionResult Details(string? id)
         {
             var pullRequestFromDb = _unitOfWork.PullRequestRepository.GetFirstOrDefault(x => x.Id == id);
+            var repos = _unitOfWork.RepoRepository.GetAll();
 
-            var source = _unitOfWork.RepoRepository.GetFirstOrDefault(r => r.Id == pullRequestFromDb.Source);
-            var target = _unitOfWork.RepoRepository.GetFirstOrDefault(r => r.Id == pullRequestFromDb.TargetRepository);
+            var source = repos.FirstOrDefault(r => r.Id == pullRequestFromDb.Source);
+            var target = repos.FirstOrDefault(r => r.Id == pullRequestFromDb.TargetRepository);
             var comments = _unitOfWork.CommentRepository.GetAll().Where(c => c.PullRequestId == id);
 
             var commentsModel = new CommentsViewModel
             {
                 PrId = pullRequestFromDb.Id,
-                Comments = comments
+                TargetRepo = pullRequestFromDb.TargetRepository,
+                Comments = comments,
+                Repositories = repos,
+                LoggedUserId = User.Claims.First().Value
             };
 
             var model = new PullRequestViewModel

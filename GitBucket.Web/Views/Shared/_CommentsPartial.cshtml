@@ -14,7 +14,11 @@
         <p>Created On: @comment.CreatedDateTime</p>
         @comment.Title
     </div>
-     <a class="delete btn btn-danger mb-5" data-id="@comment.Id" data-prId="@comment.PullRequestId" style="width:150px">
-         <i class="bi bi-trash"></i>Delete
-     </a>
+    @if (Model.LoggedUserId == comment.UserId || (Model.Repositories.Any(r => r.Id == Model.TargetRepo) && Model.LoggedUserId == Model.Repositories.FirstOrDefault(r => r.Id == Model.TargetRepo).UserId))
+    {
+        <a class="delete btn btn-danger mb-5" data-id="@comment.Id" data-prId="@comment.PullRequestId" style="width:150px">
+          <i class="bi bi-trash"></i>Delete
+        </a>
+    }
+
 }
