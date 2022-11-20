@@ -10,6 +10,7 @@
             <h2 class="text-primary text-light">Issue to @Model.RepoName</h2>
             <hr />
         </div>
+        <div asp-validation-summary="All"></div>
         <input asp-for="RepositoryId" hidden />
         <div class="mb-3" style="width:50%">
             <label asp-for="Title">Issue Name</label>
@@ -29,6 +30,8 @@
 </form>
 
 @section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+
     <script>
         tinymce.init({
             selector: 'textarea',

@@ -137,7 +137,9 @@ namespace GitBucket.Web.Controllers
             targetRepoFromDb.Content = sourceRepoFromDb.Content;
 
             var approvedPr = _unitOfWork.PullRequestRepository.GetFirstOrDefault(x => x.Id == prId);
+            var prComments = _unitOfWork.CommentRepository.GetAll().Where(x => x.PullRequestId == prId);
 
+            _unitOfWork.CommentRepository.RemoveRange(prComments);
             _unitOfWork.PullRequestRepository.Remove(approvedPr);
             _unitOfWork.RepoRepository.Remove(sourceRepoFromDb);
             _unitOfWork.Save();

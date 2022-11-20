@@ -12,6 +12,7 @@
         </div>
         <input asp-for="RepoId" hidden/>
         <input asp-for="RepoName" hidden />
+        <div asp-validation-summary="All"></div>
         <div class="mb-3" style="width:50%">
             <label asp-for="Title">Commit Name</label>
             <input asp-for="Title" class="form-control" />
@@ -30,6 +31,8 @@
 </form>
 
 @section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+
     <script>
         tinymce.init({
             selector: 'textarea',

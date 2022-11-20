@@ -7,6 +7,7 @@
             <h2 class="text-primary text-light">Open Pull Request</h2>
             <hr />
         </div>
+        <div asp-validation-summary="All"></div>
         <div class="mb-3" style="width:50%">
             <label asp-for="Name">Name</label>
             <input asp-for="Name" class="form-control" />
@@ -35,3 +36,7 @@
         </div>
     </div>
 </form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
