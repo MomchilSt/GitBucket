@@ -1,4 +1,5 @@
 using GitBucket.Data;
+using GitBucket.Data.DbInitializer;
 using GitBucket.Data.Repositories;
 using GitBucket.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<GitBucketDbContext>(options => options.UseSqlServe
 builder.Services.AddDefaultIdentity<IdentityUser>()
     .AddEntityFrameworkStores<GitBucketDbContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.TryAddScoped<SignInManager<IdentityUser>>();
 
 builder.Services.Configure<IdentityOptions>(options =>
@@ -40,6 +42,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+SeedDatabase();
 app.UseAuthentication();
 app.MapRazorPages();
 app.UseAuthorization();
@@ -49,3 +52,12 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initializer();
+    }
+}
