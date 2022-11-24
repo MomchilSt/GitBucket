@@ -28,7 +28,7 @@ namespace GitBucket.Data.DbInitializer
             catch (Exception)
             {}
 
-            if (_userManager.Users.Any() == true)
+            if (_userManager.Users.Any() == false)
             {
                 var user = new User 
                 {
